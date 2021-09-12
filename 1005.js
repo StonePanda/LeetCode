@@ -56,5 +56,4 @@
     return sum
 };
 // git commit的时候 message写错了，正在尝试补救
-
 // 什么鬼，git commit --amend根本不行
