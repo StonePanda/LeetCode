@@ -61,7 +61,7 @@
  * @param {number} fee
  * @return {number}
  */
- var maxProfit = function(prices, fee) {
+var maxProfit = function(prices, fee) {
     // 首先只能持有一只股票
     // 第二个示例[1,3,7,5,10,3]
     // 这个是1买入，10卖出，扣手续费后就是最大的利益
@@ -79,14 +79,78 @@
     // 但是加入后面有比在这个点更好的买入点,也就是比prices[i]-fee
     // 还要低的买入点,比如[1,3,7,3,10,3]比[1,10]整段买起来
     // 还要少了一点那点低的成本,所以贪心是成立的
-    let buyin=prices[0]
-    let profit=0
-    for(let i=1;i<prices.length;i++){
-        if(prices[i]<buyin) buyin=prices[i]
-        else if(prices[i]>buyin+fee){
-            profit+=prices[i]-buyin-fee
-            buyin=prices[i]-fee
+    let buyin = prices[0]
+    let profit = 0
+    for (let i = 1; i < prices.length; i++) {
+        if (prices[i] < buyin) buyin = prices[i]
+        else if (prices[i] > buyin + fee) {
+            profit += prices[i] - buyin - fee
+            buyin = prices[i] - fee
         }
     }
     return profit
+};
+
+// 用动态规划的方法重新做了一下：
+/**
+ * @param {number[]} prices
+ * @param {number} fee
+ * @return {number}
+ */
+var maxProfit = function(prices, fee) {
+    // 之前使用贪心算法做的
+    // 假如说用动规的话，对于每天的股票有四种情况，
+    // 买入，买入后保持，卖出，卖出后保持
+    // 0买入：
+    // dp[i][0]=Math.max(dp[i-1][2],dp[i-1][3])-prices[i]
+    // 1买入后保持：
+    // dp[i][1]=Math.max(dp[i-1][0],dp[i-1][1])
+    // 卖出：
+    // dp[i][2]=Math.max(dp[i-1][0],dp[i-1][1])+prices[i]
+    // 卖出后保持：
+    // dp[i][3]=Math.max(dp[i-1][2],dp[i-1][3])
+    let dp = Array(prices.length)
+    for (let i = 0; i < dp.length; i++) {
+        dp[i] = Array(4)
+    }
+    dp[0][0] = -prices[0]
+    dp[0][1] = -prices[0]
+    dp[0][2] = 0
+    dp[0][3] = 0
+    for (let i = 1; i < dp.length; i++) {
+        dp[i][0] = Math.max(dp[i - 1][2], dp[i - 1][3]) - prices[i]
+        dp[i][1] = Math.max(dp[i - 1][0], dp[i - 1][1])
+        dp[i][2] = Math.max(dp[i - 1][0], dp[i - 1][1]) + prices[i] - fee
+        dp[i][3] = Math.max(dp[i - 1][2], dp[i - 1][3])
+    }
+    // console.log(dp)
+    return Math.max(dp[dp.length - 1][2], dp[dp.length - 1][3])
+};
+// 也是自己第一遍做，就通过了，这个状态分类思想是沿用了309题目教程里的思想
+
+// 一看教程，还有另外一种方法
+/**
+ * @param {number[]} prices
+ * @param {number} fee
+ * @return {number}
+ */
+var maxProfit = function(prices, fee) {
+    // 这道题用教程里的思路去做：
+    // 每一天只有两种状态，持有股票和不持有股票
+    // 0持有股票：可能是昨天已经持有股票的连续，或者今天就买股票
+    // dp[i][0]=Math.max(dp[i-1][0],dp[i-1][1]-prices[i])
+    // 1不持有股票：可能是昨天不持有股票的连续，或者今天就卖股票
+    // dp[i][1]=Math.max(dp[i-1][1],dp[i-1][0]+prices[i]-fee)
+    let dp = Array(prices.length)
+    for (let i = 0; i < dp.length; i++) {
+        dp[i] = Array(2)
+    }
+    dp[0][0] = -prices[0]
+    dp[0][1] = 0
+    for (let i = 1; i < dp.length; i++) {
+        dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] - prices[i])
+        dp[i][1] = Math.max(dp[i - 1][1], dp[i - 1][0] + prices[i] - fee)
+    }
+    // console.log(dp)
+    return dp[dp.length - 1][1]
 };
