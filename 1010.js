@@ -125,3 +125,4 @@ var numPairsDivisibleBy60 = function(time) {
     return result
 };
 // 最后是用贪心解决了，执行用时一下子就减小了！
+// 是贪心
