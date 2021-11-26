@@ -122,3 +122,50 @@ var searchBST = function(root, val) {
     return getTree(root, val)
 };
 // 然后我自己改成上面这个样子！其实也想到了上一个会超出时间！因为没必要跑两次递归！
+
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @param {number} val
+ * @return {TreeNode}
+ */
+var searchBST = function(root, val) {
+    // 感觉还是递归呢？
+
+    // 发现这道题没有说节点有没有重复
+
+    // 每日一题又弄到自己已经做过的题目了！
+    // 所以再来一次吧！
+    // 感觉层序遍历可以的
+    // 然后做的时候突然发现，递归似乎更好用啊！
+    // 因为层序遍历涉及的判断更多一点！
+    // 但是之前好像是用的递归呢！
+    // 那这次就层序遍历吧！
+    let que = []
+    if (root != null) {
+        que.push(root)
+    }
+    while (que.length != 0) {
+        let quelen = que.length
+        for (let i = 0; i < quelen; i++) {
+            let tmp = que.shift()
+            if (tmp.val == val) {
+                return tmp
+            }
+            if (tmp.left != null) {
+                que.push(tmp.left)
+            }
+            if (tmp.right != null) {
+                que.push(tmp.right)
+            }
+        }
+    }
+    return null
+};
